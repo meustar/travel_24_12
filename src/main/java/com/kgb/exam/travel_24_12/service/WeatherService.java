@@ -2,9 +2,10 @@ package com.kgb.exam.travel_24_12.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kgb.exam.travel_24_12.repository.WeatherRepository;
 import com.kgb.exam.travel_24_12.vo.Weather;
+import com.kgb.exam.travel_24_12.repository.WeatherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,11 +21,13 @@ public class WeatherService {
     @Autowired
     private WeatherRepository weatherRepository;
 
+    private final RestTemplate restTemplate = new RestTemplate();
+
     // OpenWeather API URL
     private final String apiUrl = "https://api.openweathermap.org/data/2.5/weather";
 
-    // OpenWeather API Key (발급받은 API Key 입력)
-    private final String apiKey = "API_KEY";
+    @Value("${api.openweather-key}")
+    private String apiKey; // application.yml에서 가져오기
 
     // 한글 도시 이름을 영문으로 매핑
     private final Map<String, String> cityMapping;
@@ -40,26 +43,28 @@ public class WeatherService {
     }
 
     public Weather getWeather(String cityName, String nx, String ny) {
-        Weather weather = fetchWeatherFromAPI(cityName);
+        Weather weather = fetchWeatherFromAPI(cityName, nx, ny);
         if (weather != null) {
-            weatherRepository.save(weather);
+            weatherRepository.save(weather); // 유효한 데이터만 저장
         }
         return weather;
     }
 
-    private Weather fetchWeatherFromAPI(String cityName) {
+    private Weather fetchWeatherFromAPI(String cityName, String nx, String ny) {
         try {
             // 한글 도시 이름을 영문으로 변환
             String city = cityMapping.getOrDefault(cityName, cityName);
             String encodedCityName = URLEncoder.encode(city, StandardCharsets.UTF_8.toString());
 
             // URL 구성
-            String url = apiUrl + "?q=" + encodedCityName  + "&appid=" + apiKey + "&units=metric";
+            String url = apiUrl + "?q=" + encodedCityName
+                    + "&appid=" + apiKey
+                    + "&units=metric";
 
-            System.out.println("Request URL: " + url); // 디버깅을 위한 URL 출력
+            // 디버깅용 URL 출력
+            System.out.println("Request URL: " + url);
 
             // API 호출
-            RestTemplate restTemplate = new RestTemplate();
             String response = restTemplate.getForObject(url, String.class);
 
             // JSON 응답 파싱

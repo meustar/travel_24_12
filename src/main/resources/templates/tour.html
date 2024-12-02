@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tour Information</title>
+    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=77e6d842c9857fb7c3c3fc23af30cf3a"></script>
+</head>
+<body>
+<h1>Tourist Spots and Weather</h1>
+<h2>Weather</h2>
+<p>Temperature: <span th:text="${weather.main.temp}">-</span> °C</p>
+<p>Humidity: <span th:text="${weather.main.humidity}">-</span>%</p>
+
+<h2>Tourist Spots</h2>
+<div th:each="spot : ${spots}">
+    <h3 th:text="${spot.title}">Spot Title</h3>
+    <p th:text="${spot.addr1}">Address</p>
+    <img th:src="${spot.firstImage}" alt="Image" style="width:200px;height:auto;">
+    <div id="map"></div>
+</div>
+
+<script>
+    // 카카오맵 설정
+    var map = new kakao.maps.Map(document.getElementById('map'), {
+        center: new kakao.maps.LatLng(37.5665, 126.9780),
+        level: 3
+    });
+</script>
+</body>
+</html>

@@ -1,24 +1,27 @@
 package com.kgb.exam.travel_24_12.vo;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Data
 public class Weather {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String city;
-    private double temperature;
-    private int humidity;
-    private double windSpeed;
-    private LocalDateTime timestamp;
+    private String city; // 도시 이름
+    private double temperature; // 온도
+    private int humidity; // 습도
+    private double windSpeed; // 풍속
+    private LocalDateTime timestamp; // 데이터 기록 시간
+
+    // TouristSpot은 비영속 데이터로 처리
+    @Transient
+    private TouristSpot touristSpot; // 외래 키가 아닌 비영속 필드로 선언
 
     public Weather() {
     }
@@ -28,54 +31,6 @@ public class Weather {
         this.temperature = temperature;
         this.humidity = humidity;
         this.windSpeed = windSpeed;
-        this.timestamp = timestamp;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public double getTemperature() {
-        return temperature;
-    }
-
-    public void setTemperature(double temperature) {
-        this.temperature = temperature;
-    }
-
-    public int getHumidity() {
-        return humidity;
-    }
-
-    public void setHumidity(int humidity) {
-        this.humidity = humidity;
-    }
-
-    public double getWindSpeed() {
-        return windSpeed;
-    }
-
-    public void setWindSpeed(double windSpeed) {
-        this.windSpeed = windSpeed;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 }
